@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
+// This is for dev-only, specify correct backend URL for deployment
+const CLERC_CREATE_ACCOUNT_URL = "/create-standard-account"
+
 class StripeRedirect extends Component {
 
     constructor(props) {
@@ -12,8 +15,8 @@ class StripeRedirect extends Component {
       }
 
     // Event handler for submit button
-    handleSubmit(event, storeName) {
-        event.preventDefault()
+    handleSubmit(event, vendorName, authCode) {
+        event.preventDefault();
 
         // Get form and check its validity
         const form = event.currentTarget;
@@ -21,24 +24,35 @@ class StripeRedirect extends Component {
           event.stopPropagation();
         }
 
-        console.log("proceed")
-
-        console.log(storeName);
-
+        let createAcctData = {
+            account_auth_code: authCode,
+            vendor_name: vendorName
+        }
+        // Form is valid, post the parameters
+        fetch(CLERC_CREATE_ACCOUNT_URL, {
+            method: 'post',
+            body: JSON.stringify(createAcctData)
+        }).then(function(response) {
+            console.log(response) // TODO do something with the response?
+        })
+        // .then(function(data) {
+        //     console.log(data)
+        // });
     }
 
     render() {
 
         const queryParser = require('query-string');
         const queries = queryParser.parse(this.props.location.search);
+        let authCode = queries.code;
         
-        if (queries.code) {
+        if (authCode) {
             // Successfully retrieve code, load final form
             return (
                 <div>
                     <h1>Success</h1>
                     <Form
-                    onSubmit={e => this.handleSubmit(e, this.vendorNameInput.current.value)}>
+                    onSubmit={e => this.handleSubmit(e, this.vendorNameInput.current.value, authCode)}>
                     <Form.Row>
                         <Form.Group>
                             <Form.Label>Store Name</Form.Label>
