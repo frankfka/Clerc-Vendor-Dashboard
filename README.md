@@ -1,2 +1,2 @@
 ## Clerc Website
-Includes dashboard & landing page
+Dashboard for vendor setup
