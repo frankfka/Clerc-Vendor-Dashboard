@@ -1,0 +1,27 @@
+.main-container {
+    padding-top: 8em;
+    padding-bottom: 4em;
+}
+.primary-text {
+    color: #00796B;
+}
+.centered {
+    text-align: center;
+    margin: auto;
+}
+.primary-btn {
+    background-color: #00796B;
+    border: none;
+    color: white;
+}
+.primary-btn:hover {
+    background-color: #004C40;
+    border: none;
+    color: white;
+}
+.div-with-bottom-space {
+    margin-bottom: 2em;
+}
+.decorative-img {
+    width: 80%;
+}

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import './App.css';
 
-import SetupStart from './SetupStart'
-import StripeRedirect from './StripeRedirect'
-import SetupResult from './SetupResult'
+import './App.css'
+
+import SetupStart from './pages/SetupStart'
+import StripeRedirect from './pages/StripeRedirect'
+import SetupResult from './pages/SetupResult'
 
 class App extends Component {
   render() {
