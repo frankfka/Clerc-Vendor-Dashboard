@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 // This is for dev-only, specify correct backend URL for deployment
-const CLERC_CREATE_ACCOUNT_URL = "/create-standard-account"
+const CLERC_CREATE_ACCOUNT_URL = "/vendors/connect-standard-account"
 
 class StripeRedirect extends Component {
 
@@ -15,7 +15,7 @@ class StripeRedirect extends Component {
       }
 
     // Event handler for submit button
-    handleSubmit(event, vendorName, authCode) {
+    handleSubmit(event, vendorName, authCode, history) {
         event.preventDefault();
 
         // Get form and check its validity
@@ -33,11 +33,18 @@ class StripeRedirect extends Component {
             method: 'post',
             body: JSON.stringify(createAcctData)
         }).then(function(response) {
-            console.log(response) // TODO do something with the response?
+            // Push to SetupResult with a success bool
+            let success = false
+            console.log(response) // TODO remove in prod
+            if (response.status === 201) {
+                console.log("Setup success")
+                success = true
+            }
+            history.push({
+                pathname: '/setup/setup-finished',
+                state: {success: success}
+            })
         })
-        // .then(function(data) {
-        //     console.log(data)
-        // });
     }
 
     render() {
@@ -52,7 +59,7 @@ class StripeRedirect extends Component {
                 <div>
                     <h1>Success</h1>
                     <Form
-                    onSubmit={e => this.handleSubmit(e, this.vendorNameInput.current.value, authCode)}>
+                    onSubmit={e => this.handleSubmit(e, this.vendorNameInput.current.value, authCode, this.props.history)}>
                     <Form.Row>
                         <Form.Group>
                             <Form.Label>Store Name</Form.Label>
