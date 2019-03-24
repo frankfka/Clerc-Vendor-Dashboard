@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button'
 import './css/SetupRedirect.css'
 
 // This is for dev-only, specify correct backend URL for deployment
-const CLERC_CREATE_ACCOUNT_URL = "/vendors/connect-standard-account"
+const CLERC_CREATE_ACCOUNT_URL = "http://34.217.14.89:4567/vendors/connect-standard-account"
 
 class StripeRedirect extends Component {
 
@@ -36,6 +36,7 @@ class StripeRedirect extends Component {
         // Form is valid, post the parameters
         fetch(CLERC_CREATE_ACCOUNT_URL, {
             method: 'post',
+            headers: {'Access-Control-Allow-Origin':'*'},
             body: JSON.stringify(createAcctData)
         }).then(function(response) {
             // Push to SetupResult with a success bool
