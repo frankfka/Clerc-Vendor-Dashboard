@@ -2,10 +2,8 @@
   "name": "clerc-dashboard",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://frankfka.github.io/clerc-vendor-dashboard",
   "dependencies": {
     "bootstrap": "^4.3.1",
-    "gh-pages": "^2.0.1",
     "query-string": "^6.4.0",
     "react": "^16.8.4",
     "react-bootstrap": "^1.0.0-beta.5",
@@ -14,8 +12,6 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
