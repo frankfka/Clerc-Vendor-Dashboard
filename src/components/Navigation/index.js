@@ -4,15 +4,20 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
 import SignOutButton from '../SignOut'
+import { AuthUserContext } from '../Session';
 
-const Navigation = ({authUser}) => (
+// Exported navigation component that consumes current auth & renders conditionally
+const Navigation = () => (
   <div>
-    {
-      authUser ? <NavSignedIn/> : <NavNotSignedIn/>
-    }
+    <AuthUserContext.Consumer>
+      {authUser =>
+        authUser ? <NavSignedIn /> : <NavNotSignedIn />
+      }
+    </AuthUserContext.Consumer>
   </div>
 );
 
+// Shown when user is currently signed in 
 const NavSignedIn = () => (
   <ul>
     <li>
@@ -30,6 +35,7 @@ const NavSignedIn = () => (
   </ul>
 );
 
+// Shown when no current user is signed in
 const NavNotSignedIn = () => (
   <ul>
     <li>
