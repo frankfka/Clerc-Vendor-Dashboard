@@ -60,6 +60,8 @@ class SignUpFormBase extends Component {
       .then(authUser => {
         // Reset form to initial state
         this.setState({ ...INITIAL_STATE });
+        // Create a new vendor object in firebase
+        this.props.firebase.doCreateVendor(authUser.user.uid)
         // Then push to home page
         this.props.history.push(ROUTES.HOME);
       })

@@ -23,14 +23,13 @@ const withAuthentication = Component => {
         // If an auth user is passed (i.e someone is logged in)
         // Update the current state and use local storage to save the current user
         // This decreases the loading time as we don't wait for firebase
+        // If null is passed, we set authUser as null
         authUser => {
-          console.log("User logged in")
           localStorage.setItem('authUser', JSON.stringify(authUser));
           this.setState({ authUser });
         },
-        // Else remove localstorage & set current user to null
+        // Error case where no authUser is given
         () => {
-          console.log("User logged out")
           localStorage.removeItem('authUser');
           this.setState({ authUser: null });
         },

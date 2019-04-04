@@ -1,6 +1,10 @@
 import app from 'firebase/app';
 
 import 'firebase/auth'
+import 'firebase/firestore'
+
+import * as FIRESTORE from '../../constants/firestore'
+import * as ERROR from '../../constants/errors'
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,6 +20,7 @@ class Firebase {
     constructor() {
         app.initializeApp(config);
         this.auth = app.auth();
+        this.db = app.firestore();
     }
 
     /**
@@ -33,6 +38,47 @@ class Firebase {
 
     doPasswordUpdate = password =>
       this.auth.currentUser.updatePassword(password);
+
+    /**
+     * Firestore methods
+     */
+
+    // Creates a vendor in firestore
+    doCreateVendor = (uid) => {
+      const firestore = this.db
+      return new Promise(function(resolve, reject) {
+        firestore.collection(FIRESTORE.VENDOR_COLLECTION)
+        .doc(uid)
+        .set({[FIRESTORE.VENDOR_STORES_PROP]: []})
+        .then(function() {
+          resolve({
+            message: "Document added"
+          })
+        })
+        .catch(function(error) {
+          reject(error)
+        });
+      })
+    }
+
+    // Retrieves the stores for the vendor. 
+    // Throws error if vendor object does not exist
+    getStoreIdsForVendor = (uid) => {
+      const firestore = this.db
+      return new Promise(function(resolve, reject) {
+        firestore.collection(FIRESTORE.VENDOR_COLLECTION).doc(uid).get().then(function(doc) {
+          if (doc.exists) {
+            // Vendor doc exists, get store info
+            const data = doc.data()
+            resolve(data[FIRESTORE.VENDOR_STORES_PROP])
+          } else {
+            reject({
+              message: ERROR.VENDOR_DNE
+            })
+          }
+        })
+      })
+    }
 
 }
 

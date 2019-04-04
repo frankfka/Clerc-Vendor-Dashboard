@@ -1,0 +1,1 @@
+export const VENDOR_DNE = "Vendor does not exist"
