@@ -95,11 +95,11 @@ a:hover{
         text-decoration: none;
     }
 
-    .nav-link {
-        font-size: $font-size-large;
-        a:hover {
-            color: $color-primary;
-        }
+    .nav-item {
+        font-size: $font-size-medium;
+        margin: auto 0.5em;
+        margin-right: 1.2em;
+        margin-left: 0;
     }
 
 }
