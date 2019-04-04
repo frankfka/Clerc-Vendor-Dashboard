@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+import Button from 'react-bootstrap/Button'
 
 import * as ROUTES from '../../constants/routes';
 
@@ -8,43 +11,42 @@ import { AuthUserContext } from '../Session';
 
 // Exported navigation component that consumes current auth & renders conditionally
 const Navigation = () => (
-  <div>
-    <AuthUserContext.Consumer>
-      {authUser =>
-        authUser ? <NavSignedIn /> : <NavNotSignedIn />
-      }
-    </AuthUserContext.Consumer>
-  </div>
+      <Navbar className="main-nav" sticky="top">
+        <Navbar.Brand>
+          <Link to={ROUTES.HOME} className="nav-logo-text">Clerc</Link>
+        </Navbar.Brand>
+        <div className="ml-auto">
+          <AuthUserContext.Consumer>
+            {
+              authUser => authUser ? <NavSignedIn/> : <NavNotSignedIn />
+            }
+          </AuthUserContext.Consumer>
+        </div>
+      </Navbar>
 );
 
 // Shown when user is currently signed in 
 const NavSignedIn = () => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.HOME}>Home</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    <li>
+  <div>
+    <Nav>
+      <Nav.Item>
+        <Link to={ROUTES.HOME}>Home</Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Link to={ROUTES.ACCOUNT}>Account</Link>
+      </Nav.Item>
       <SignOutButton />
-    </li>
-  </ul>
+    </Nav>
+  </div>
 );
 
 // Shown when no current user is signed in
 const NavNotSignedIn = () => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-    </li>
-  </ul>
+  <Nav>
+    <Button type="button">
+      <Link to={ROUTES.ACCOUNT}>Sign In</Link>
+    </Button>
+  </Nav>
 );
 
 export default Navigation;

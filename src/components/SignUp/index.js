@@ -2,21 +2,25 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
+import './index.scss'
+
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
 
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import ErrorHint from '../Standard/Error';
 
 /**
  * Default export sign-up page
  */
 const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
+  <Container fluid className="body-container">
+    <h1 className="sign-up-header">Sign Up</h1>
     <SignUpForm/>
-  </div>
+  </Container>
 );
 
 /**
@@ -82,6 +86,10 @@ class SignUpFormBase extends Component {
       passwordTwo,
       error,
     } = this.state;
+
+    if (error) {
+      console.log(error.message)
+    }
 
     // Used for form validation
     const isInvalid =
@@ -154,7 +162,7 @@ class SignUpFormBase extends Component {
         </Form.Group>
 
         <Button type="submit" disabled={isInvalid}>Sign Up</Button>
-        {error && <p>{error.message}</p>}
+        {error && <div className="sign-up-error-hint"><ErrorHint message={error.message}/></div>}
       </Form>
     );
   }

@@ -24,11 +24,13 @@ const withAuthentication = Component => {
         // Update the current state and use local storage to save the current user
         // This decreases the loading time as we don't wait for firebase
         authUser => {
+          console.log("User logged in")
           localStorage.setItem('authUser', JSON.stringify(authUser));
           this.setState({ authUser });
         },
         // Else remove localstorage & set current user to null
         () => {
+          console.log("User logged out")
           localStorage.removeItem('authUser');
           this.setState({ authUser: null });
         },
@@ -44,7 +46,7 @@ const withAuthentication = Component => {
     render() {
       return (
         <AuthUserContext.Provider value={this.state.authUser}>
-          <Component {...this.props} />
+          <Component authUser={this.state.authUser} {...this.props} />
         </AuthUserContext.Provider>
       );
     }

@@ -1,0 +1,147 @@
+$fonts: 'Roboto', sans-serif;
+$font-size-header-main: 4em;
+$font-size-header-sec: 2.6em;
+$font-size-large: 1.4em;
+$font-size-medium: 1.2em;
+$font-size-normal: 1.1em;
+$font-weight-normal: 300;
+$font-weight-bold: 400;
+$color-primary: #00796B;
+$color-primary-dark: #004C40;
+$color-primary-light: rgba(224,242,241,0.3);
+$color-accent: #FF8F00;
+$color-text-dark: #212121;
+$color-text-light: #757575;
+$color-text-white: #FFFFFF;
+$color-divider: #9E9E9E;
+
+//
+// Generic Elements
+//
+body {
+    font-family: $fonts;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-normal;
+    color: $color-text-dark;
+    min-height: 100vh;
+}
+.body-container {
+    padding: 4em;
+}
+// Applied to all buttons
+.btn {
+    font-weight: $font-weight-normal;
+    text-decoration: none;
+}
+// Primary Button
+.btn-primary, .btn-primary:disabled {
+    font-size: $font-size-normal;
+    color: white;
+    background-color: $color-primary;
+    border: none;
+
+    // This is required in case we use a React Router Link within
+    a {
+        color: white;
+    }
+    a:hover {
+        color: white;
+        text-decoration: none;
+    }
+}
+.btn-primary:hover {
+    background-color: $color-primary-dark;
+    border: none;
+}
+// Links
+a {
+    color: $color-primary;
+}
+a:hover{
+    color: $color-primary-dark;
+    text-decoration: none;
+}
+// Forms
+.form-control::placeholder {
+    font-weight: $font-weight-normal;
+    color: $color-text-light;
+}
+.form-control:focus {
+    border-color: $color-primary;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 2px $color-primary;
+}
+// Background colors for containers
+.light-primary-background {
+    background-color: $color-primary-light;
+}
+.white-background {
+    background-color: white;
+}
+
+// Navigation
+.main-nav {
+
+    padding-left: 2em;
+    padding-right: 2em;
+    background-color: white;
+    border-bottom: 0.5px solid $color-divider;
+
+    .nav-logo-text {
+        font-size: $font-size-large;
+        font-weight: $font-weight-bold;
+        color: $color-primary;
+    }
+    .nav-logo-text:hover {
+        text-decoration: none;
+    }
+
+    .nav-link {
+        font-size: $font-size-large;
+        a:hover {
+            color: $color-primary;
+        }
+    }
+
+}
+
+// Footer
+.footer {
+    padding-top: 1em;
+    padding-bottom: 0.2em;
+    font-size: 0.8em;
+    position:absolute;
+left:0;
+bottom:0;
+right:0;
+}
+
+// Helpers
+.centered {
+    text-align: center;
+}
+.vertical-center {
+    display: flex;
+    align-items: center;
+}
+.secondary-header-text {
+    font-size: $font-size-header-sec;
+    font-weight: $font-weight-normal;
+}
+.main-header-text {
+    font-size: $font-size-header-main;
+}
+.medium-text {
+    font-size: $font-size-medium;
+}
+.bolded {
+    font-weight: $font-weight-bold;
+}
+.accent-text {
+    color: $color-accent;
+}
+.primary-text {
+    color: $color-primary;
+}
+.grey-text {
+    color: $color-text-light;
+}
