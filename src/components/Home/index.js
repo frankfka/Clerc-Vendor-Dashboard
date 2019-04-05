@@ -64,7 +64,7 @@ const isSignedIn = authUser => !!authUser;
 const HomePage = compose(
   withAuthentication,
   withAuthorization(isSignedIn),
-  withStore
+  withStore,
   )(HomePageBase);
 
 export default HomePage;

@@ -105,6 +105,43 @@ class Firebase {
       })
     }
 
+    // Retrieves first n products starting after a given snapshot (if provided)
+    // Or just retrieves the first n products (default 10)
+    getProductsForStore = (storeId, numToRetrieve = 10, prevLastSnapshot) => {
+      const firestore = this.db
+      let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
+                               .doc(storeId)
+                               .collection(FIRESTORE.PRODUCT_COLLECTION)
+      // Add ".startAfter" if prevLastSnapshot given
+      if (prevLastSnapshot) {
+        reference = reference.startAfter(prevLastSnapshot)
+      }
+      reference = reference.limit(numToRetrieve)
+      return new Promise(function(resolve, reject) {
+        reference.get()
+                  .then(function(querySnapshot) {
+                    let productsToReturn = []
+                    querySnapshot.forEach(function(doc) {
+                      // TODO: We could formalize this in a class
+                      const docData = doc.data()
+                      productsToReturn.push({
+                        id: doc.id,
+                        name: docData[FIRESTORE.PRODUCT_NAME_PROP],
+                        currency: docData[FIRESTORE.PRODUCT_CURRENCY_PROP],
+                        cost: docData[FIRESTORE.PRODUCT_COST_PROP]
+                      })
+                    });
+                    resolve({
+                      products: productsToReturn,
+                      lastVisible: querySnapshot.docs.length !== 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null
+                    })
+                  })
+                  .catch(function(error) {
+                    reject(error)
+                  })
+      })
+    }
+
 }
 
 export default Firebase;
