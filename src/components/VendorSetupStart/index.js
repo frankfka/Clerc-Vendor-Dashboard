@@ -29,8 +29,7 @@ class SetupStart extends Component {
                 <Button 
                     href={STRIPE_CONNECT_URL}
                     className="btn-primary"
-                    target="_blank"
-                    rel="noopener noreferrer">
+                    target="_blank">
                     Connect With Stripe
                 </Button>
                 </Col>

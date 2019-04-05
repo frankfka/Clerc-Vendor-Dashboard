@@ -1,35 +1,48 @@
 import React, {Component} from 'react';
 
 import { withAuthentication, withAuthorization } from '../Session';
-import SetupStart from '../SetupStart';
+import SetupStart from '../VendorSetupStart';
 import * as ERROR from '../../constants/errors'
 
 import { compose } from 'recompose'
+import Loading from '../Standard/Loading';
+
+import './index.scss'
 
 class HomePageBase extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      loaded: false,
       authUser: this.props.authUser, // Never null
     };
   }
 
   render() {
-    const {authUser, store} = this.state
+    const {store, loaded} = this.state
 
-    if (store === undefined) {
-      return (
-        <h1>LOADING</h1>
-      )
-    } else if (store === null) {
-      return (
-        <SetupStart/>
-      )
-    } else {
+    // Check that all required conditions are met
+    if (loaded && store != null) {
+      // THIS IS THE MAIN COMPONENT
       return (
         <h1>{store}</h1>
       )
+    } else {
+      // Check for the error state
+      if (!loaded) {
+        // Still loading
+        return (
+          <div className="loading-animation-home">
+            <Loading/>
+          </div>
+        )
+      } else if (store == null) {
+        // No store, show setup screen
+        return (
+          <SetupStart/>
+        )
+      }
     }
   }
 
@@ -49,9 +62,11 @@ class HomePageBase extends Component {
         }
         // Set the current state
         component.setState({
+          loaded: true,
           store: storeId
         });
       })
+      // Called when we fail to create a vendor on sign-up
       .catch(function(error) {
         console.error(error.message) 
         // If we failed to create a vendor on sign-up, we catch it here
@@ -61,6 +76,7 @@ class HomePageBase extends Component {
           firebase.doCreateVendor(uid)
           .then(function() {
             component.setState({
+              loaded: true,
               store: null
             });
           })
