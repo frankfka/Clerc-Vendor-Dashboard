@@ -80,6 +80,31 @@ class Firebase {
       })
     }
 
+    // Retrieves the store object given the ID
+    getStoreWithId = (storeId) => {
+      const firestore = this.db
+      return new Promise(function(resolve, reject) {
+        firestore.collection(FIRESTORE.STORE_COLLECTION).doc(storeId).get().then(function(doc) {
+          if (doc.exists) {
+            // Vendor doc exists, get store info
+            const data = doc.data()
+            // Build our own data structure
+            const store = {
+              id: storeId,
+              name: data[FIRESTORE.STORE_NAME_PROP],
+              defaultCurrency: data[FIRESTORE.STORE_CURRENCY_PROP],
+              parentVendorId: data[FIRESTORE.STORE_PARENT_VENDOR_PROP],
+            }
+            resolve(store)
+          } else {
+            reject({
+              message: ERROR.STORE_DNE
+            })
+          }
+        })
+      })
+    }
+
 }
 
 export default Firebase;

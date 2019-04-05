@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import AuthUserContext from './context'
+import AuthUserContext from './userContext'
 
 // This takes in a condition, and if the condition evaluates to false
 // We push the sign-in page to the user - this will block unauthed users 

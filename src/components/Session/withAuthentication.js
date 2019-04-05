@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AuthUserContext from './context';
+import AuthUserContext from './userContext';
 import { withFirebase } from '../Firebase';
 
 // Higher order component to bundle authentication
