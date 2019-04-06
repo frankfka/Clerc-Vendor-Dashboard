@@ -9,7 +9,7 @@ import Table from 'react-bootstrap/Table'
 import './index.scss'
 
 // Default # items in table
-const DEFAULT_TABLE_SIZE = 1
+const DEFAULT_TABLE_SIZE = 2
 // Loading state with no products
 const DEFAULT_STATE = {
   loading: true,
@@ -19,6 +19,12 @@ const DEFAULT_STATE = {
   firstVisibleProduct: null, // Used to paginate
   lastVisibleProduct: null // Used to paginate
 };
+
+const tableLoading = (height) => (
+  <tbody className="table-loading-tbody" style={{height: height + 'px'}}>
+    <tr><td colSpan="3" className="table-loading-td"><div><Loading doFadeIn={false}/></div></td></tr>
+  </tbody>
+)
 
 class ProductTableBase extends Component {
 
@@ -31,6 +37,7 @@ class ProductTableBase extends Component {
     };
   }
 
+  // Logic to get products for previous page
   getPreviousPage = () => {
     const component = this;
     const { firebase } = this.props
@@ -45,19 +52,15 @@ class ProductTableBase extends Component {
       // check that last visible is not null
       firebase.getProductsForStore(store.id, numPerPage, firstVisibleProduct, undefined)
               .then(function(result) {
-                // Only update state if we have products to fill the table with
-                if(result.products.length !== 0) {
-                  component.updateState(false, result.products, result.firstVisible,
-                                        result.lastVisible, currentPage - 1, result.products.length < numPerPage);
-                } else {
-                  console.log("Previous products list is empty")
-                }
+                component.updateState(false, result.products, result.firstVisible,
+                                      result.lastVisible, currentPage - 1, result.products.length < numPerPage);
               }).catch(function(error) {
                 console.log("Error getting next page: " + error)
               })
     }
   }
 
+  // Logic to get products for next day
   getNextPage = () => {
     const component = this;
     const { firebase } = this.props
@@ -74,7 +77,6 @@ class ProductTableBase extends Component {
               .then(function(result) {
                 // if the next page is empty, do nothing and indicate that it is the last page
                 if (result.products.length === 0) {
-                  console.log("Reached last page")
                   component.setState({
                     isLastPage: true,
                     loading: false
@@ -88,10 +90,6 @@ class ProductTableBase extends Component {
                 console.log("Error getting next page: " + error)
               })
     }
-  }
-
-  logState = () => {
-    console.log(this.state)
   }
 
   // Updates the state given the required variables
@@ -109,28 +107,39 @@ class ProductTableBase extends Component {
   // Build the component
   render() {
 
-    const { products, currentPage, isLastPage } = this.state
-    const disablePagination = false;
-    // Check to disable/enable prev/next 
+    const { products, currentPage, isLastPage, loading, numPerPage } = this.state;
+
+    const disablePrevPagination = (currentPage === 1) || loading;
+    const disableNextPagination = isLastPage || loading;
+    // Calculate the height of the loading state
+    const loadingTableHeight = numPerPage * 50;
+
     return (
       <div>
-        <Table>
+        <Table className="products-table">
+
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Item</th>
+            <th>Unit Cost</th>
+            <th>Identifier</th>
           </tr>
         </thead>
-        <tbody>
-          {products.map(product => (
-            <tr key={product.id}>
-              <td>{product.name}</td>
-            </tr>
-          ))}
-        </tbody>
+
+        { loading ? tableLoading(loadingTableHeight) : 
+          <tbody>
+            {products.map(product => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>$ {product.cost.toFixed(2)}</td>
+                <td>{product.id}</td>
+              </tr>
+            ))}
+          </tbody>
+        }
         </Table>
-        <Pagination.Prev onClick={this.getPreviousPage} disabled={currentPage === 1}/>
-        <Pagination.First onClick={this.logState}/>
-        <Pagination.Next onClick={this.getNextPage} disabled={isLastPage}/>
+        <Pagination.Prev onClick={this.getPreviousPage} disabled={disablePrevPagination}/>
+        <Pagination.Next onClick={this.getNextPage} disabled={disableNextPagination}/>
       </div>
     )
   }

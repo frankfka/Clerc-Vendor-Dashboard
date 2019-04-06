@@ -40,7 +40,7 @@ class HomePageBase extends Component {
         // Still loading
         return (
           <div className="loading-animation-home">
-            <Loading/>
+            <Loading doFadeIn={true}/>
           </div>
         )
       } else if (!store) {

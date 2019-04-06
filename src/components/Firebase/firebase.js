@@ -105,54 +105,77 @@ class Firebase {
       })
     }
 
-    // Retrieves first n products
+    // Retrieves first n products (default 10)
     // starting after a given snapshot (if provided)
     // or just before a given snapshot (if provided)
-    // Or just retrieves the first n products (default 10)
     getProductsForStore = (storeId, numToRetrieve = 10, beforeSnapshot, afterSnapshot) => {
+      // Get a reference to the products collection
       const firestore = this.db
       let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
                                .doc(storeId)
                                .collection(FIRESTORE.PRODUCT_COLLECTION)
-                               .orderBy("name")
 
-      // Add retrieve after a given snapshot (if provided)
+      // NOTE: There is a bug in firestore - so to retrieve documents
+      // Before a certain snapshot, we reverse the order then use "startAfter"
+      // The flip the resulting arrays
+
+      // Complete the reference object
       if (afterSnapshot) {
-        reference = reference.startAfter(afterSnapshot)
-      }
-      // Or retrieve before a given snapshot (if provided)
-      else if (beforeSnapshot) {
-        console.log(beforeSnapshot)
-        reference = reference.endBefore(beforeSnapshot)
+        reference = reference.orderBy("name")
+                             .startAfter(afterSnapshot)
+      } else if (beforeSnapshot) {
+        reference = reference.orderBy("name", "desc")
+                             .startAfter(beforeSnapshot)
+      } else {
+        reference = reference.orderBy("name")
       }
       reference = reference.limit(numToRetrieve)
 
+      // Create a promise to return
       return new Promise(function(resolve, reject) {
+        // Get the documents from the refernece
         reference.get()
-                  .then(function(querySnapshot) {
-                    let productsToReturn = []
-                    // Add each document to the list of products
-                    querySnapshot.forEach(function(doc) {
-                      // TODO: We could formalize this in a class
-                      const docData = doc.data()
-                      productsToReturn.push({
-                        id: doc.id,
-                        name: docData[FIRESTORE.PRODUCT_NAME_PROP],
-                        currency: docData[FIRESTORE.PRODUCT_CURRENCY_PROP],
-                        cost: docData[FIRESTORE.PRODUCT_COST_PROP]
-                      })
-                    });
-                    // Return the list & the first/last snapshots for future pagination
-                    resolve({
-                      products: productsToReturn,
-                      firstVisible: querySnapshot.docs.length !== 0 ? querySnapshot.docs[0] : null,
-                      lastVisible: querySnapshot.docs.length !== 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null
+                 .then(function(querySnapshot) {
+
+                  let productsToReturn = []
+                  // Add each document to the list of products
+                  querySnapshot.forEach(function(doc) {
+                    // TODO: We could formalize this in a class
+                    const docData = doc.data()
+                    productsToReturn.push({
+                      id: doc.id,
+                      name: docData[FIRESTORE.PRODUCT_NAME_PROP],
+                      currency: docData[FIRESTORE.PRODUCT_CURRENCY_PROP],
+                      cost: docData[FIRESTORE.PRODUCT_COST_PROP]
                     })
+                  });
+
+                  // We also need references for future pagination
+                  let firstVisible = null;
+                  let lastVisible = null;
+                  if (querySnapshot.docs.length !== 0) {
+                    // Flip references / products if we're going to previous page
+                    if (beforeSnapshot) {
+                      productsToReturn.reverse();
+                      firstVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+                      lastVisible = querySnapshot.docs[0];
+                    } else {
+                      firstVisible = querySnapshot.docs[0];
+                      lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+                    }
+                  }
+                  
+                  // Return the list & the first/last snapshots for future pagination
+                  resolve({
+                    products: productsToReturn,
+                    firstVisible: firstVisible,
+                    lastVisible: lastVisible
                   })
-                  .catch(function(error) {
-                    console.log("Error getting products: " + error)
-                    reject(error)
-                  })
+                })
+                .catch(function(error) {
+                  console.log("Error getting products: " + error)
+                  reject(error)
+                })
       })
     }
 

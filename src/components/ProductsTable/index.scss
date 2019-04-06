@@ -1,1 +1,11 @@
 @import '../../global';
+
+.products-table {
+    tr {
+        height: 50px;
+    }
+    .table-loading-td {
+        text-align: center;
+        vertical-align: middle;
+    }
+}
