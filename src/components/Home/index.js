@@ -7,6 +7,7 @@ import { compose } from 'recompose'
 import Loading from '../Standard/Loading';
 
 import './index.scss'
+import ProductsTable from '../ProductsTable';
 
 class HomePageBase extends Component {
 
@@ -27,7 +28,11 @@ class HomePageBase extends Component {
     if (!loading && store) {
       // THIS IS THE MAIN COMPONENT
       return (
-        <h1>{store.name}</h1>
+        <div>
+          <h1>{store.name}</h1>
+          <ProductsTable store={store}/>
+
+        </div>
       )
     } else {
       // Check for the error state

@@ -105,22 +105,31 @@ class Firebase {
       })
     }
 
-    // Retrieves first n products starting after a given snapshot (if provided)
+    // Retrieves first n products
+    // starting after a given snapshot (if provided)
+    // or just before a given snapshot (if provided)
     // Or just retrieves the first n products (default 10)
-    getProductsForStore = (storeId, numToRetrieve = 10, prevLastSnapshot) => {
+    getProductsForStore = (storeId, numToRetrieve = 10, beforeSnapshot, afterSnapshot) => {
       const firestore = this.db
       let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
                                .doc(storeId)
                                .collection(FIRESTORE.PRODUCT_COLLECTION)
-      // Add ".startAfter" if prevLastSnapshot given
-      if (prevLastSnapshot) {
-        reference = reference.startAfter(prevLastSnapshot)
+
+      // Add retrieve after a given snapshot (if provided)
+      if (afterSnapshot) {
+        reference = reference.startAfter(afterSnapshot)
       }
+      // Or retrieve before a given snapshot (if provided)
+      else if (beforeSnapshot) {
+        reference = reference.endBefore(beforeSnapshot)
+      }
+
       reference = reference.limit(numToRetrieve)
       return new Promise(function(resolve, reject) {
         reference.get()
                   .then(function(querySnapshot) {
                     let productsToReturn = []
+                    // Add each document to the list of products
                     querySnapshot.forEach(function(doc) {
                       // TODO: We could formalize this in a class
                       const docData = doc.data()
@@ -131,12 +140,15 @@ class Firebase {
                         cost: docData[FIRESTORE.PRODUCT_COST_PROP]
                       })
                     });
+                    // Return the list & the first/last snapshots for future pagination
                     resolve({
                       products: productsToReturn,
+                      firstVisible: querySnapshot.docs.length !== 0 ? querySnapshot.docs[0] : null,
                       lastVisible: querySnapshot.docs.length !== 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null
                     })
                   })
                   .catch(function(error) {
+                    console.log("Error getting products: " + error)
                     reject(error)
                   })
       })
