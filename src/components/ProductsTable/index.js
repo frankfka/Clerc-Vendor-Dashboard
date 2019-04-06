@@ -4,11 +4,12 @@ import { compose } from 'recompose';
 import { withFirebase } from '../Firebase';
 import Pagination from 'react-bootstrap/Pagination'
 import Loading from '../Standard/Loading';
+import Table from 'react-bootstrap/Table'
 
 import './index.scss'
 
 // Default # items in table
-const DEFAULT_TABLE_SIZE = 2
+const DEFAULT_TABLE_SIZE = 1
 // Loading state with no products
 const DEFAULT_STATE = {
   loading: true,
@@ -48,6 +49,8 @@ class ProductTableBase extends Component {
                 if(result.products.length !== 0) {
                   component.updateState(false, result.products, result.firstVisible,
                                         result.lastVisible, currentPage - 1, result.products.length < numPerPage);
+                } else {
+                  console.log("Previous products list is empty")
                 }
               }).catch(function(error) {
                 console.log("Error getting next page: " + error)
@@ -71,6 +74,7 @@ class ProductTableBase extends Component {
               .then(function(result) {
                 // if the next page is empty, do nothing and indicate that it is the last page
                 if (result.products.length === 0) {
+                  console.log("Reached last page")
                   component.setState({
                     isLastPage: true,
                     loading: false
@@ -105,11 +109,25 @@ class ProductTableBase extends Component {
   // Build the component
   render() {
 
-    const { numPerPage, products, currentPage, isLastPage } = this.state
+    const { products, currentPage, isLastPage } = this.state
     const disablePagination = false;
     // Check to disable/enable prev/next 
     return (
       <div>
+        <Table>
+        <thead>
+          <tr>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map(product => (
+            <tr key={product.id}>
+              <td>{product.name}</td>
+            </tr>
+          ))}
+        </tbody>
+        </Table>
         <Pagination.Prev onClick={this.getPreviousPage} disabled={currentPage === 1}/>
         <Pagination.First onClick={this.logState}/>
         <Pagination.Next onClick={this.getNextPage} disabled={isLastPage}/>

@@ -114,6 +114,7 @@ class Firebase {
       let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
                                .doc(storeId)
                                .collection(FIRESTORE.PRODUCT_COLLECTION)
+                               .orderBy("name")
 
       // Add retrieve after a given snapshot (if provided)
       if (afterSnapshot) {
@@ -121,10 +122,11 @@ class Firebase {
       }
       // Or retrieve before a given snapshot (if provided)
       else if (beforeSnapshot) {
+        console.log(beforeSnapshot)
         reference = reference.endBefore(beforeSnapshot)
       }
-
       reference = reference.limit(numToRetrieve)
+
       return new Promise(function(resolve, reject) {
         reference.get()
                   .then(function(querySnapshot) {
