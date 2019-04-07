@@ -113,7 +113,7 @@ class ProductTableBase extends Component {
     const disablePrevPagination = (currentPage === 1) || loading;
     const disableNextPagination = isLastPage || loading || products.length < numPerPage;
     // Calculate the height of the loading state
-    const loadingTableHeight = numPerPage * 50;
+    const loadingTableHeight = numPerPage * 25;
 
     return (
       <div>
@@ -129,7 +129,7 @@ class ProductTableBase extends Component {
         { loading ? tableLoading(loadingTableHeight) : 
           <tbody>
             {products.map(product => (
-              <tr key={product.id} onClick={rowClicked ? () => rowClicked(product.id) : null}>
+              <tr key={product.id} onClick={rowClicked ? () => rowClicked(product) : null}>
                 <td>{product.name}</td>
                 <td>$ {product.cost.toFixed(2)}</td>
                 <td>{product.id}</td>

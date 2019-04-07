@@ -10,10 +10,10 @@ import './index.scss'
 
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../PasswordForget'
-import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import { withFirebase } from '../../Firebase';
+import * as ROUTES from '../../../constants/routes';
 import Container from 'react-bootstrap/Container';
-import ErrorHint from '../Standard/Error';
+import ErrorHint from '../../Standard/Error';
 
 /**
  * Default export sign-in page

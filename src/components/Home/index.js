@@ -6,6 +6,7 @@ import SetupStart from '../VendorSetupStart';
 import { compose } from 'recompose'
 import Loading from '../Standard/Loading';
 import ProductsTable from '../ProductsTable';
+import * as ROUTES from '../../constants/routes'
 
 import './index.scss'
 import Container from 'react-bootstrap/Container';
@@ -23,8 +24,11 @@ class HomePageBase extends Component {
   }
 
   // When a product row is clicked, we want to navigate to a product page
-  productTableRowClicked = (id) => {
-    console.log(id)
+  productTableRowClicked = (product) => {
+    this.props.history.push({
+      pathname: ROUTES.PRODUCT_DETAIL,
+      state: { product: product }
+    })
   }
 
   render() {

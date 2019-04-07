@@ -9,9 +9,10 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 
-import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-import ErrorHint from '../Standard/Error';
+import { withFirebase } from '../../Firebase';
+import * as ROUTES from '../../../constants/routes';
+import ErrorHint from '../../Standard/Error';
+import { BackToSignInLink } from '../SignIn';
 
 /**
  * Default export sign-up page
@@ -165,6 +166,7 @@ class SignUpFormBase extends Component {
 
         <Button type="submit" disabled={isInvalid}>Sign Up</Button>
         {error && <div className="sign-up-error-hint"><ErrorHint message={error.message}/></div>}
+        <div className="mt-2"><BackToSignInLink/></div>
       </Form>
     );
   }

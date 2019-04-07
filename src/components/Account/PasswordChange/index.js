@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { withFirebase } from '../Firebase';
+import { withFirebase } from '../../Firebase';
 
 // Define an initial state for the form (all empty)
 const INITIAL_STATE = {

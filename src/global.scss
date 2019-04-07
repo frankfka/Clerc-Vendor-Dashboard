@@ -39,7 +39,7 @@ body {
 .btn-primary, .btn-primary:disabled {
     font-size: $font-size-normal;
     color: white;
-    background-color: $color-primary;
+    background-color: $color-primary !important; // Overrides all styles
     border: none;
 
     // This is required in case we use a React Router Link within
@@ -52,7 +52,7 @@ body {
     }
 }
 .btn-primary:hover {
-    background-color: $color-primary-dark;
+    background-color: $color-primary-dark !important;
     border: none;
 }
 // Links

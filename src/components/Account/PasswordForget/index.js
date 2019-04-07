@@ -9,11 +9,11 @@ import Row from 'react-bootstrap/Row'
 
 import './index.scss'
 
-import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-import ErrorHint from '../Standard/Error';
+import { withFirebase } from '../../Firebase';
+import * as ROUTES from '../../../constants/routes';
+import ErrorHint from '../../Standard/Error';
 import { BackToSignInLink } from '../SignIn'
-import SuccessHint from '../Standard/Success';
+import SuccessHint from '../../Standard/Success';
 
 // Exported forget password page
 const PasswordForgetPage = () => (
