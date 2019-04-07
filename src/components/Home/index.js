@@ -5,9 +5,11 @@ import SetupStart from '../VendorSetupStart';
 
 import { compose } from 'recompose'
 import Loading from '../Standard/Loading';
+import ProductsTable from '../ProductsTable';
 
 import './index.scss'
-import ProductsTable from '../ProductsTable';
+import Container from 'react-bootstrap/Container';
+
 
 class HomePageBase extends Component {
 
@@ -20,6 +22,11 @@ class HomePageBase extends Component {
     };
   }
 
+  // When a product row is clicked, we want to navigate to a product page
+  productTableRowClicked = (id) => {
+    console.log(id)
+  }
+
   render() {
 
     const { loading, store } = this.state
@@ -28,11 +35,10 @@ class HomePageBase extends Component {
     if (!loading && store) {
       // THIS IS THE MAIN COMPONENT
       return (
-        <div>
+        <Container fluid className="body-container">
           <h1>{store.name}</h1>
-          <ProductsTable store={store}/>
-
-        </div>
+          <ProductsTable store={store} rowClicked={this.productTableRowClicked}/>
+        </Container>
       )
     } else {
       // Check for the error state

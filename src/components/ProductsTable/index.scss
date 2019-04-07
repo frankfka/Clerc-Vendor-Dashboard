@@ -1,11 +1,37 @@
 @import '../../global';
 
 .products-table {
-    tr {
-        height: 50px;
-    }
+
+    border: 0.5px solid $color-divider;
+
     .table-loading-td {
         text-align: center;
         vertical-align: middle;
+    }
+
+    thead {
+        background-color: $color-primary-light;
+        font-weight: $font-weight-bold;
+    }
+    th, td {
+        border-bottom: 0.5px solid $color-divider !important;
+    }
+    tbody {
+        tr {
+            height: 50px;
+        }
+        tr:hover {
+            background-color: $color-primary-light;
+            cursor: pointer;
+        }
+    }
+}
+.products-table-pagination {
+    float: right;
+    .page-link {
+        color: $color-primary;
+    }
+    .page-link:hover {
+        color: $color-primary;
     }
 }

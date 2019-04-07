@@ -4,12 +4,12 @@ import { compose } from 'recompose';
 import { withFirebase } from '../Firebase';
 import Pagination from 'react-bootstrap/Pagination'
 import Loading from '../Standard/Loading';
-import Table from 'react-bootstrap/Table'
+import Table from 'react-bootstrap/Table';
 
 import './index.scss'
 
 // Default # items in table
-const DEFAULT_TABLE_SIZE = 2
+const DEFAULT_TABLE_SIZE = 10
 // Loading state with no products
 const DEFAULT_STATE = {
   loading: true,
@@ -20,6 +20,7 @@ const DEFAULT_STATE = {
   lastVisibleProduct: null // Used to paginate
 };
 
+// Loading animation when table is in loading state
 const tableLoading = (height) => (
   <tbody className="table-loading-tbody" style={{height: height + 'px'}}>
     <tr><td colSpan="3" className="table-loading-td"><div><Loading doFadeIn={false}/></div></td></tr>
@@ -33,6 +34,7 @@ class ProductTableBase extends Component {
     this.state = {
       ...DEFAULT_STATE,
       store: this.props.store,
+      rowClicked: this.props.rowClicked,
       numPerPage: DEFAULT_TABLE_SIZE
     };
   }
@@ -107,29 +109,27 @@ class ProductTableBase extends Component {
   // Build the component
   render() {
 
-    const { products, currentPage, isLastPage, loading, numPerPage } = this.state;
-
+    const { products, currentPage, isLastPage, loading, numPerPage, rowClicked } = this.state;
     const disablePrevPagination = (currentPage === 1) || loading;
-    const disableNextPagination = isLastPage || loading;
+    const disableNextPagination = isLastPage || loading || products.length < numPerPage;
     // Calculate the height of the loading state
     const loadingTableHeight = numPerPage * 50;
 
     return (
       <div>
         <Table className="products-table">
-
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Unit Cost</th>
-            <th>Identifier</th>
+            <th width="40%">Item</th>
+            <th width="20%">Unit Cost</th>
+            <th width="40%">Identifier</th>
           </tr>
         </thead>
 
         { loading ? tableLoading(loadingTableHeight) : 
           <tbody>
             {products.map(product => (
-              <tr key={product.id}>
+              <tr key={product.id} onClick={rowClicked ? () => rowClicked(product.id) : null}>
                 <td>{product.name}</td>
                 <td>$ {product.cost.toFixed(2)}</td>
                 <td>{product.id}</td>
@@ -138,8 +138,10 @@ class ProductTableBase extends Component {
           </tbody>
         }
         </Table>
-        <Pagination.Prev onClick={this.getPreviousPage} disabled={disablePrevPagination}/>
-        <Pagination.Next onClick={this.getNextPage} disabled={disableNextPagination}/>
+        <Pagination className="products-table-pagination">
+          <Pagination.Prev onClick={this.getPreviousPage} disabled={disablePrevPagination}/>
+          <Pagination.Next onClick={this.getNextPage} disabled={disableNextPagination}/>
+        </Pagination>
       </div>
     )
   }
