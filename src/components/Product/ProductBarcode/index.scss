@@ -1,0 +1,13 @@
+@import '../../../global';
+
+.generated-product-barcode {
+
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+
+    p {
+        font-size: $font-size-small;
+    }
+
+}

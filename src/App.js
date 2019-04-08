@@ -13,7 +13,7 @@ import { withAuthentication } from './components/Session';
 import * as ROUTES from './constants/routes';
 import Footer from './components/Footer';
 import StripeRedirect from './components/VendorSetupRedirect';
-import ProductDetail from './components/ProductDetail';
+import ProductDetail from './components/Product/ProductDetail';
 
 /**
  * Everything is rendered within the App component

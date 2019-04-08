@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button'
 
 import * as ROUTES from '../../constants/routes';
 
-import SignOutButton from '../SignOut'
+import SignOutButton from '../Account/SignOut'
 import { AuthUserContext } from '../Session';
 
 // Exported navigation component that consumes current auth & renders conditionally

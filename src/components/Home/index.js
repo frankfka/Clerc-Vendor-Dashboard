@@ -1,16 +1,21 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 
 import { withAuthentication, withAuthorization, withStore } from '../Session';
 import SetupStart from '../VendorSetupStart';
 
 import { compose } from 'recompose'
 import Loading from '../Standard/Loading';
-import ProductsTable from '../ProductsTable';
+import ProductTable from '../Product/ProductTable';
 import * as ROUTES from '../../constants/routes'
 
 import './index.scss'
 import Container from 'react-bootstrap/Container';
 
+// Standard back to sign in link blurb to be used elsewhere
+export const BackToHomeLink = () => (
+  <Link to={ROUTES.HOME}>← Back to Home</Link>
+);
 
 class HomePageBase extends Component {
 
@@ -41,7 +46,7 @@ class HomePageBase extends Component {
       return (
         <Container fluid className="body-container">
           <h1>{store.name}</h1>
-          <ProductsTable store={store} rowClicked={this.productTableRowClicked}/>
+          <ProductTable store={store} rowClicked={this.productTableRowClicked}/>
         </Container>
       )
     } else {

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { compose } from 'recompose';
 
-import { withFirebase } from '../Firebase';
+import { withFirebase } from '../../Firebase';
 import Pagination from 'react-bootstrap/Pagination'
-import Loading from '../Standard/Loading';
+import Loading from '../../Standard/Loading';
 import Table from 'react-bootstrap/Table';
 
 import './index.scss'
@@ -172,8 +172,8 @@ class ProductTableBase extends Component {
 
 }
 
-const ProductsTable = compose(
+const ProductTable = compose(
   withFirebase
   )(ProductTableBase);
 
-export default ProductsTable;
+export default ProductTable;
