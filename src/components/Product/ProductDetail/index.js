@@ -20,7 +20,8 @@ class ProductDetailBase extends Component {
     super(props);
     this.state = {
         product: this.props.location.state ? this.props.location.state.product : null,
-        editedProduct: this.props.location.state ? this.props.location.state.product : null,
+        editedName: this.props.location.state ? this.props.location.state.product.name : null,
+        editedCost: this.props.location.state ? this.props.location.state.product.cost : null,
         isEditing: false,
         showGeneratedBarcode: false,
     };
@@ -45,15 +46,20 @@ class ProductDetailBase extends Component {
     // Do what's necessary to save the product
     saveButtonPressed = () => {
         // TODO do firebase stuff
-        const newModifiedProduct = this.state.editedProduct
+        const originalProduct = this.state.product
+        originalProduct.name = this.state.editedName
+        originalProduct.cost = parseFloat(this.state.editedCost).toFixed(2)
         this.setState({
-            product: newModifiedProduct,
+            product: originalProduct,
+            editedName: originalProduct.name,
+            editedCost: originalProduct.cost,
             isEditing: false
         })
     }
 
     // Delete the product after prompting for confirmation
     deleteButtonPressed = () => {
+        console.log("Delete!!!")
         // Show dialog
         // Do firebase stuff
         // Navigate back to home page
@@ -64,17 +70,15 @@ class ProductDetailBase extends Component {
     cancelButtonPressed = () => {
         const originalProduct = this.state.product
         this.setState({
-            editedProduct: originalProduct,
+            editedName: originalProduct.name,
+            editedCost: originalProduct.cost,
             isEditing: false
         })
     }
 
     // Fired on form change (during editing)
     formEdited = (event) => {
-        const editedProduct = this.state.editedProduct
-        editedProduct[event.target.name] = event.target.value
-        console.log(editedProduct)
-        this.setState({ editedProduct: editedProduct });
+        this.setState({ [event.target.name]: event.target.value });
     }
 
     // Change state to editing mode
@@ -87,10 +91,11 @@ class ProductDetailBase extends Component {
     render() {
 
     // Always initialized (otherwise we should navigate back)
-    const { product, editedProduct, isEditing } = this.state
+    const { product, editedCost, editedName, isEditing } = this.state
 
-    // TODO form validation
-    
+    // Form validation - we impose a 200char limit for now
+    const isInvalid = editedName === '' || editedName.length > 200 ||
+                        editedCost === '' || isNaN(editedCost) || parseFloat(editedCost) <= 0
 
     if (product) {
         return (
@@ -120,9 +125,9 @@ class ProductDetailBase extends Component {
                                 </Form.Label>
                                 <Col sm="8">
                                     <Form.Control 
-                                        name="name"
+                                        name="editedName"
                                         readOnly={!isEditing}
-                                        value={editedProduct.name}
+                                        value={editedName}
                                         onChange={this.formEdited}
                                         type="text"
                                     />
@@ -135,11 +140,10 @@ class ProductDetailBase extends Component {
                                 </Form.Label>
                                 <Col sm="8">
                                     <Form.Control
-                                        name="cost"
+                                        name="editedCost"
                                         readOnly={!isEditing}
-                                        value={editedProduct.cost}
+                                        value={editedCost}
                                         onChange={this.formEdited}
-                                        type="number"
                                     />
                                 </Col>
                             </Form.Group>
@@ -151,11 +155,16 @@ class ProductDetailBase extends Component {
                                             variant="outline-primary"
                                             className="mx-1">Cancel</Button>
                                     <Button onClick={this.saveButtonPressed}
+                                            disabled={isInvalid}
                                             className="mx-1">Save</Button>
                                 </div>
                                 :
                                 <Button onClick={this.editProductPressed}>Edit</Button>
                             }
+                        </div>
+                        <div className="product-detail-delete-button-container">
+                            <span className="product-detail-delete-button"
+                                        onClick={this.deleteButtonPressed}>Delete Product</span>
                         </div>
                     </div>
                 </div>
