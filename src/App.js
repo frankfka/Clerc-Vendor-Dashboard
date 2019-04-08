@@ -14,6 +14,7 @@ import * as ROUTES from './constants/routes';
 import Footer from './components/Footer';
 import StripeRedirect from './components/VendorSetupRedirect';
 import ProductDetail from './components/Product/ProductDetail';
+import AddProduct from './components/Product/AddProduct';
 
 /**
  * Everything is rendered within the App component
@@ -35,6 +36,7 @@ class App extends Component {
             <Route path={ROUTES.ACCOUNT} component={AccountPage} />
             <Route path={ROUTES.STRIPE_REDIRECT} component={StripeRedirect} />
             <Route path={ROUTES.PRODUCT_DETAIL} component={ProductDetail} />
+            <Route path={ROUTES.ADD_PRODUCT} component={AddProduct} />
             <Footer/>
         </Router>
       </div>

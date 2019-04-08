@@ -179,6 +179,21 @@ class Firebase {
       })
     }
 
+    // Creates a product in firestore
+    createProduct = (id, name, cost) => {
+      
+    }
+
+    // Updates a product in firestore
+    updateProduct = (id, newName, newCost) => {
+      
+    }
+
+    // Deletes a product in firestore
+    deleteProduct = (id) => {
+
+    }
+
 }
 
 export default Firebase;

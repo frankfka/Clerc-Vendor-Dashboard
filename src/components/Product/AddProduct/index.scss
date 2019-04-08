@@ -1,0 +1,21 @@
+@import '../../../global';
+
+.add-product-section {
+
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    .add-product-form {
+        width: 60%;
+        margin: 2em auto;
+
+        .form-control {
+            font-size: $font-size-normal;
+        }
+    }
+    
+    .add-product-form-buttons {
+        text-align: center;
+    }
+
+}

@@ -11,6 +11,7 @@ import * as ROUTES from '../../constants/routes'
 
 import './index.scss'
 import Container from 'react-bootstrap/Container';
+import { AddProductButton } from '../Product/AddProduct';
 
 // Standard back to sign in link blurb to be used elsewhere
 export const BackToHomeLink = () => (
@@ -47,6 +48,7 @@ class HomePageBase extends Component {
         <Container fluid className="body-container">
           <h1>{store.name}</h1>
           <ProductTable store={store} rowClicked={this.productTableRowClicked}/>
+          <AddProductButton/>
         </Container>
       )
     } else {

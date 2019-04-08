@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import { withAuthorization } from '../../Session';
 import * as ROUTES from '../../../constants/routes'
 import ProductBarcode from '../ProductBarcode'
+import DeleteProductModal from '../DeleteProductModal'
 
 import './index.scss'
 
@@ -24,6 +25,7 @@ class ProductDetailBase extends Component {
         editedCost: this.props.location.state ? this.props.location.state.product.cost : null,
         isEditing: false,
         showGeneratedBarcode: false,
+        showDeleteConfirmation: false,
     };
     this.generatedBarcodeRef = React.createRef();
   }
@@ -58,12 +60,22 @@ class ProductDetailBase extends Component {
     }
 
     // Delete the product after prompting for confirmation
-    deleteButtonPressed = () => {
+    deleteProduct = () => {
+        // First close the modal
+        this.closeDeleteConfirmationModal()
         console.log("Delete!!!")
         // Show dialog
         // Do firebase stuff
+        // Show a banner or something?
         // Navigate back to home page
+    }
 
+    // Methods for dealing with showing/hiding of modal
+    closeDeleteConfirmationModal = () => {
+        this.setState({showDeleteConfirmation: false})
+    }
+    showDeleteConfirmationModal = () => {
+        this.setState({showDeleteConfirmation: true})
     }
 
     // Cancel editing
@@ -91,15 +103,21 @@ class ProductDetailBase extends Component {
     render() {
 
     // Always initialized (otherwise we should navigate back)
-    const { product, editedCost, editedName, isEditing } = this.state
+    const { product, editedCost, editedName, isEditing, showDeleteConfirmation } = this.state
 
-    // Form validation - we impose a 200char limit for now
-    const isInvalid = editedName === '' || editedName.length > 200 ||
+    // Form validation - we impose a 50char limit for now
+    const isInvalid = editedName === '' || editedName.length > 50 ||
                         editedCost === '' || isNaN(editedCost) || parseFloat(editedCost) <= 0
 
     if (product) {
         return (
             <Container fluid className="body-container">
+
+                <DeleteProductModal
+                    show={showDeleteConfirmation}
+                    onHide={this.closeDeleteConfirmationModal}
+                    deleteConfirmed={this.deleteProduct}/>
+
                 <BackToHomeLink/>
                 <div className="product-detail-section">
                     <div className="product-detail-header">
@@ -121,7 +139,7 @@ class ProductDetailBase extends Component {
                         <Form className="product-detail-form">
                             <Form.Group as={Row}>
                                 <Form.Label column sm="4">
-                                    Item Name
+                                    Item Name <span className="small-text grey-text">(Max 50 Char.)</span>
                                 </Form.Label>
                                 <Col sm="8">
                                     <Form.Control 
@@ -136,7 +154,7 @@ class ProductDetailBase extends Component {
 
                             <Form.Group as={Row}>
                                 <Form.Label column sm="4">
-                                    Unit Cost ($)
+                                    Unit Cost <span className="small-text grey-text">($)</span>
                                 </Form.Label>
                                 <Col sm="8">
                                     <Form.Control
@@ -164,7 +182,7 @@ class ProductDetailBase extends Component {
                         </div>
                         <div className="product-detail-delete-button-container">
                             <span className="product-detail-delete-button"
-                                        onClick={this.deleteButtonPressed}>Delete Product</span>
+                                        onClick={this.showDeleteConfirmationModal}>Delete Product</span>
                         </div>
                     </div>
                 </div>
