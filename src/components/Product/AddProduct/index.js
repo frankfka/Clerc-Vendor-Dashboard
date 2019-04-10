@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 
-import { withAuthorization } from '../../Session';
+import { withAuthorization, withStore } from '../../Session';
 import * as ROUTES from '../../../constants/routes'
 
 import './index.scss'
@@ -39,15 +39,39 @@ class AddProductBase extends Component {
 
     // Add the product to firestore
     saveButtonPressed = () => {
+        const { id, cost, autogenerateId, name } = this.state
+        const { currentStore } = this.props
+        const component = this
+
+        // TODO check for duplicate ID (will just overwrite right now)
+
+        // Check valid state
+        if (!currentStore) {
+            // TODO show error banner
+            return
+        }
+
         // Save to firebase
-        // Show a banner or something? https://github.com/schiehll/react-alert#readme
-        // Redirect to home
+        this.props.firebase.createProduct(currentStore.id, autogenerateId ? null : id, name, cost)
+                           .then(function(product) {
+                               // Go to product page
+                               // TODO - show success banner
+                               component.props.history.push({
+                                    pathname: ROUTES.PRODUCT_DETAIL,
+                                    state: { product: product }
+                                })
+                           })
+                           .catch(function(error) {
+                               console.log(error)
+                               // TODO show failure banner
+                           })
     }
 
     // Cancel editing
     cancelButtonPressed = () => {
-        // Show an alert
+        // TODO Show an alert
         // Redirect to home
+        this.props.history.push(ROUTES.HOME);
     }
 
     // Fired on form change (during editing)
@@ -151,6 +175,7 @@ class AddProductBase extends Component {
 const isSignedIn = authUser => !!authUser;
 const AddProduct = compose(
   withAuthorization(isSignedIn),
+  withStore
   )(AddProductBase);
 
 export default AddProduct;

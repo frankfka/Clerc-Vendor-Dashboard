@@ -180,17 +180,78 @@ class Firebase {
     }
 
     // Creates a product in firestore
-    createProduct = (id, name, cost) => {
+    createProduct = (storeId, id, name, cost) => {
+      const firestore = this.db
+      let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
+                               .doc(storeId)
+                               .collection(FIRESTORE.PRODUCT_COLLECTION)
+      if(id) {
+        // ID Provided - use it for the doc reference
+        reference = reference.doc(id)
+      } else {
+        // Autogenerate
+        reference = reference.doc()
+      }
       
+      // Create and return a promise
+      return new Promise(function(resolve, reject) {
+        const newProduct = {
+          name: name,
+          id: reference.id,
+          cost: parseFloat(cost),
+          currency: 'cad'
+        }
+        reference.set(newProduct)
+        .then(function() {
+          resolve(newProduct)
+        })
+        .catch(function(error) {
+          reject(error)
+        });
+      });
     }
 
     // Updates a product in firestore
-    updateProduct = (id, newName, newCost) => {
-      
+    updateProduct = (storeId, id, newName, newCost) => {
+      const firebase = this
+      // Just use the create product if id is given
+      return new Promise(function(resolve, reject) {
+        if (!id) {
+          reject({error: "No ID given"})
+        } else {
+          firebase.createProduct(storeId, id, newName, newCost)
+            .then(function(createProductResolve) {
+              resolve(createProductResolve)
+            })
+            .catch(function(error) {
+              reject(error)
+            })
+        }
+      });
     }
 
     // Deletes a product in firestore
-    deleteProduct = (id) => {
+    deleteProduct = (storeId, id) => {
+      const firestore = this.db
+      let reference = firestore.collection(FIRESTORE.STORE_COLLECTION)
+                               .doc(storeId)
+                               .collection(FIRESTORE.PRODUCT_COLLECTION)
+                               .doc(id)
+      
+      // Try to delete the product
+      return new Promise(function(resolve, reject) {
+        if (!id) {
+          reject({error: "No ID given"})
+        } else {
+          reference.delete()
+                   .then(function() {
+                     resolve()
+                   })
+                   .catch(function(error) {
+                     reject(error)
+                   })
+        }
+      })
 
     }
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import { withAuthorization } from '../../Session';
+import { withAuthorization, withStore } from '../../Session';
 import * as ROUTES from '../../../constants/routes'
 import ProductBarcode from '../ProductBarcode'
 import DeleteProductModal from '../DeleteProductModal'
@@ -47,27 +47,66 @@ class ProductDetailBase extends Component {
 
     // Do what's necessary to save the product
     saveButtonPressed = () => {
-        // TODO do firebase stuff
-        const originalProduct = this.state.product
-        originalProduct.name = this.state.editedName
-        originalProduct.cost = parseFloat(this.state.editedCost).toFixed(2)
+        const { product, editedName, editedCost } = this.state
+        const { currentStore } = this.props
+        const editedCostFloat = parseFloat(editedCost).toFixed(2)
+        const component = this
+        // First disable editing
         this.setState({
-            product: originalProduct,
-            editedName: originalProduct.name,
-            editedCost: originalProduct.cost,
             isEditing: false
         })
+
+        // Check valid state
+        if (!product || !editedName || !editedCost || !currentStore ) {
+            // TODO show error banner
+            return
+        }
+
+        // Save to firebase
+        this.props.firebase.updateProduct(currentStore.id, product.id, editedName, editedCostFloat)
+                           .then(function() {
+                               // Update state
+                                product.name = editedName
+                                product.cost = editedCostFloat
+                                component.setState({
+                                    product: product,
+                                    editedName: product.name,
+                                    editedCost: product.cost,
+                                    isEditing: false
+                                })
+                                console.log("Success in updating product")
+                               // TODO show success banner
+                           })
+                           .catch(function(error) {
+                               // TODO show error banner
+                               console.log(error)
+                           })
     }
 
     // Delete the product after prompting for confirmation
     deleteProduct = () => {
+        const { product } = this.state
+        const { currentStore } = this.props
+        const component = this
+
+        // Check valid state
+        if (!product || !currentStore ) {
+            // TODO show error banner
+            return
+        }
+
         // First close the modal
         this.closeDeleteConfirmationModal()
-        console.log("Delete!!!")
-        // Show dialog
         // Do firebase stuff
-        // Show a banner or something?
-        // Navigate back to home page
+        this.props.firebase.deleteProduct(currentStore.id, product.id)
+                           .then(function() {
+                               // Show success banner
+                               component.props.history.push(ROUTES.HOME);
+                           })
+                           .catch(function(error) {
+                               // TODO Show error banner
+                               console.log(error)
+                           })
     }
 
     // Methods for dealing with showing/hiding of modal
@@ -203,6 +242,7 @@ class ProductDetailBase extends Component {
 const isSignedIn = authUser => !!authUser;
 const ProductDetail = compose(
   withAuthorization(isSignedIn),
+  withStore
   )(ProductDetailBase);
 
 export default ProductDetail;
