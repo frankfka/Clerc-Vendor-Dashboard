@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import { withAuthorization, withStore } from '../../Session';
 import * as ROUTES from '../../../constants/routes'
 import ProductBarcode from '../ProductBarcode'
+import * as MSG from '../../../constants/strings'
+import ErrorHint from '../../Standard/Error'
 import DeleteProductModal from '../DeleteProductModal'
 
 import './index.scss'
@@ -26,6 +28,7 @@ class ProductDetailBase extends Component {
         isEditing: false,
         showGeneratedBarcode: false,
         showDeleteConfirmation: false,
+        error: false
     };
     this.generatedBarcodeRef = React.createRef();
   }
@@ -58,7 +61,11 @@ class ProductDetailBase extends Component {
 
         // Check valid state
         if (!product || !editedName || !editedCost || !currentStore ) {
-            // TODO show error banner
+            // Show error
+            console.log("Required parameters not given to component")
+            component.setState({
+                error: true
+            })
             return
         }
 
@@ -78,7 +85,10 @@ class ProductDetailBase extends Component {
                                // TODO show success banner
                            })
                            .catch(function(error) {
-                               // TODO show error banner
+                               // Show error banner
+                                component.setState({
+                                    error: true
+                                })
                                console.log(error)
                            })
     }
@@ -100,11 +110,14 @@ class ProductDetailBase extends Component {
         // Do firebase stuff
         this.props.firebase.deleteProduct(currentStore.id, product.id)
                            .then(function() {
-                               // Show success banner
+                               // TODO Show success banner
                                component.props.history.push(ROUTES.HOME);
                            })
                            .catch(function(error) {
-                               // TODO Show error banner
+                               // Show error banner
+                                component.setState({
+                                    error: true
+                                })
                                console.log(error)
                            })
     }
@@ -142,7 +155,7 @@ class ProductDetailBase extends Component {
     render() {
 
     // Always initialized (otherwise we should navigate back)
-    const { product, editedCost, editedName, isEditing, showDeleteConfirmation } = this.state
+    const { product, editedCost, editedName, isEditing, showDeleteConfirmation, error } = this.state
 
     // Form validation - we impose a 50char limit for now
     const isInvalid = editedName === '' || editedName.length > 50 ||
@@ -159,6 +172,9 @@ class ProductDetailBase extends Component {
 
                 <BackToHomeLink/>
                 <div className="product-detail-section">
+
+                    {error && <div className="sign-in-error-hint mt-3"><ErrorHint message={MSG.DEFAULT_ERROR_MSG}/></div>}
+
                     <div className="product-detail-header">
                         <h1>Product Detail</h1>
                         <h5><strong>Barcode ID:</strong> {product.id}</h5>

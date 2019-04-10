@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { withAuthorization, withStore } from '../../Session';
 import * as ROUTES from '../../../constants/routes'
+import * as MSG from '../../../constants/strings'
+import ErrorHint from '../../Standard/Error'
 
 import './index.scss'
 
@@ -25,6 +27,7 @@ const DEFAULT_STATE = {
     name: '',
     cost: '',
     autogenerateId: false,
+    error: true
 }
 
 class AddProductBase extends Component {
@@ -63,7 +66,9 @@ class AddProductBase extends Component {
                            })
                            .catch(function(error) {
                                console.log(error)
-                               // TODO show failure banner
+                               component.setState({
+                                   error: true
+                               })
                            })
     }
 
@@ -88,7 +93,7 @@ class AddProductBase extends Component {
     render() {
 
     // Always initialized (otherwise we should navigate back)
-    const { id, name, cost, autogenerateId } = this.state
+    const { id, name, cost, autogenerateId, error } = this.state
 
     // Form validation - we impose a 50char limit for now
     const isInvalid = name === '' || name.length > 50 || // Name validation
@@ -100,6 +105,9 @@ class AddProductBase extends Component {
 
             <BackToHomeLink/>
             <div className="add-product-section">
+            
+                {error && <div className="sign-in-error-hint mt-3"><ErrorHint message={MSG.DEFAULT_ERROR_MSG}/></div>}
+
                 <h1 className="centered">New Product</h1>
                 <div className="add-product-form-wrapper">
                     <Form className="add-product-form">
@@ -164,6 +172,7 @@ class AddProductBase extends Component {
                                 disabled={isInvalid}
                                 className="mx-1">Save</Button>
                     </div>
+
                 </div>
             </div>
         </Container>

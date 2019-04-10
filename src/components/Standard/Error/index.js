@@ -4,7 +4,7 @@ import Alert from 'react-bootstrap/Alert'
 
 const ErrorHint = ({message}) => (
     <div>
-        <Alert variant='danger'>
+        <Alert variant='danger' dismissible>
             {message}
         </Alert>
     </div>
