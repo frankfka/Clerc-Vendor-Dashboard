@@ -36,8 +36,33 @@ class Firebase {
 
     doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
-    doPasswordUpdate = password =>
-      this.auth.currentUser.updatePassword(password);
+    doPasswordUpdate = (existingPassword, newPassword) => {
+      const user = this.auth.currentUser;
+      const existingCredential = app.auth.EmailAuthProvider.credential(
+        user.email,
+        existingPassword
+      );
+
+      // Return a promise
+      return new Promise(function(resolve, reject) {
+        user.reauthenticateAndRetrieveDataWithCredential(existingCredential)
+            .then(function() {
+              user.updatePassword(newPassword)
+                  .then(function() {
+                    // Success
+                    resolve()
+                  })
+                  .catch(function(error) {
+                    console.log(error)
+                    reject(error)
+                  });
+            })
+            .catch(function(error) {
+              console.log(error)
+              reject(error)
+            });
+      })
+    }
 
     /**
      * Firestore methods
