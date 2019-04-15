@@ -12,8 +12,8 @@ import * as ROUTES from '../../constants/routes'
 import './index.scss'
 import { withAuthentication, withAuthorization } from '../Session';
 
-// This is for dev-only, specify correct backend URL for deployment
-const CLERC_CREATE_ACCOUNT_URL = "http://localhost:4567/vendors/connect-standard-account"
+// const CLERC_CREATE_ACCOUNT_URL = "http://localhost:4567/vendors/connect-standard-account"
+const CLERC_CREATE_ACCOUNT_URL = "https://paywithclerc.appspot.com/vendors/connect-standard-account"
 
 // Define an initial state
 const INITIAL_STATE = {
@@ -50,6 +50,7 @@ class StripeRedirectBase extends Component {
             headers: {'Access-Control-Allow-Origin':'*'},
             body: JSON.stringify(createAcctData)
         }).then(function(response) {
+            console.log(response)
             // Push to home when successful
             if (response.status === 201) {
                 component.props.history.push(ROUTES.HOME)
