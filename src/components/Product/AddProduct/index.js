@@ -27,7 +27,7 @@ const DEFAULT_STATE = {
     name: '',
     cost: '',
     autogenerateId: false,
-    error: true
+    error: false
 }
 
 class AddProductBase extends Component {
