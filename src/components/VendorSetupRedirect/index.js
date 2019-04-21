@@ -12,8 +12,10 @@ import * as ROUTES from '../../constants/routes'
 import './index.scss'
 import { withAuthentication, withAuthorization } from '../Session';
 
-// const CLERC_CREATE_ACCOUNT_URL = "http://localhost:4567/vendors/connect-standard-account"
-const CLERC_CREATE_ACCOUNT_URL = "https://paywithclerc.appspot.com/vendors/connect-standard-account"
+// const CLERC_CONNECT_STORE_URL = "http://localhost:4567/vendors/connect-standard-account"
+// const CLERC_JWT_URL = "http://localhost:4567/jwt/refresh"
+const CLERC_CONNECT_STORE_URL = "https://paywithclerc.appspot.com/vendors/connect-standard-account"
+const CLERC_JWT_URL = "https://paywithclerc.appspot.com/jwt/refresh"
 
 // Define an initial state
 const INITIAL_STATE = {
@@ -39,29 +41,50 @@ class StripeRedirectBase extends Component {
         event.preventDefault();
         const component = this;
 
-        let createAcctData = {
-            account_auth_code: authCode,
-            store_name: this.state.storeName,
-            vendor_id: this.state.authUser.uid
-        }
         // Form is valid, post the parameters
-        fetch(CLERC_CREATE_ACCOUNT_URL, {
+        // Get JWT -> Then post to create account
+        fetch(CLERC_JWT_URL, {
             method: 'post',
             headers: {'Access-Control-Allow-Origin':'*'},
-            body: JSON.stringify(createAcctData)
-        }).then(function(response) {
-            console.log(response)
-            // Push to home when successful
-            if (response.status === 201) {
-                component.props.history.push(ROUTES.HOME)
-            } else {
+            body: JSON.stringify({
+                user_id: component.state.authUser.uid
+            })
+        }).then(response => {
+            // Check the status code
+            if (!response.ok) {
+                throw new Error("HTTP status " + response.status);
+            }
+            return response.json();
+        }).then(function(data) {
+            // Response should have a token object
+            let jwt = data.token
+            // Load params required for connecting a store
+            let connectStoreData = {
+                account_auth_code: authCode,
+                store_name: component.state.storeName,
+                vendor_id: component.state.authUser.uid,
+                token: jwt
+            }
+            // Now post to connect the store
+            fetch(CLERC_CONNECT_STORE_URL, {
+                method: 'post',
+                headers: {'Access-Control-Allow-Origin':'*'},
+                body: JSON.stringify(connectStoreData)
+            }).then(function(response) {
+                // Push to home when successful
+                if (response.ok) {
+                    component.props.history.push(ROUTES.HOME)
+                } else {
+                    throw new Error("HTTP status " + response.status);
+                }
+            }).catch(function(error) {
+                console.log("Error making call to create store " + error)
                 // propagate error state
                 component.setState({error: true});
-            }
+            })
         }).catch(function(error) {
-            console.log("Error making call to create store " + error)
-            // propagate error state
-            component.setState({error: true});
+            console.log("Error retrieving JWT " + error)
+            component.setState({error: true})
         })
     }
 
