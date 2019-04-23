@@ -12,10 +12,8 @@ import * as ROUTES from '../../constants/routes'
 import './index.scss'
 import { withAuthentication, withAuthorization } from '../Session';
 
-// const CLERC_CONNECT_STORE_URL = "http://localhost:4567/vendors/connect-standard-account"
-// const CLERC_JWT_URL = "http://localhost:4567/jwt/refresh"
-const CLERC_CONNECT_STORE_URL = "https://paywithclerc.appspot.com/vendors/connect-standard-account"
-const CLERC_JWT_URL = "https://paywithclerc.appspot.com/jwt/refresh"
+const CLERC_CONNECT_STORE_URL = process.env.REACT_APP_BACKEND_CONNECT_URL
+const CLERC_JWT_URL = process.env.REACT_APP_BACKEND_JWT_URL
 
 // Define an initial state
 const INITIAL_STATE = {
